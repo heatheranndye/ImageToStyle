@@ -1,0 +1,10 @@
+diffusers 
+accelerate
+transformers
+scipy 
+ftfy
+Pillow
+torch
+torchvision
+torchaudio
+jupyter    

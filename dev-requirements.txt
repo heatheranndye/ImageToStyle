@@ -1,0 +1,8 @@
+flake8 
+black 
+pytest
+mypy
+ipykernel
+streamlit
+fastapi
+uvicorn[standard]
