@@ -19,8 +19,7 @@ st.image(image_file)
 
 user_prompt = st.text_input(label="Add a prompt")
 
-inputs = {"id_num": option, "prompt": user_prompt}
-
+inputs = {"id_number": option, "prompt": user_prompt}
 
 if st.button("Modify:"):
     res = requests.post(
