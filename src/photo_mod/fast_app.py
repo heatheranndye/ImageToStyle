@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from ml_imagetoimage import image_retrieval, image_pipe
+from photo_mod.ml_imagetoimage import image_retrieval, image_pipe
 
 app = FastAPI()
 
