@@ -1,8 +1,7 @@
 import streamlit as st
 import json
 import requests
-import pathlib
-from ml_imagetoimage import DATAPATH
+
 
 st.title("Image to Image Diffusion")
 

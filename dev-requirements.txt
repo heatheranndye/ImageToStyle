@@ -6,3 +6,5 @@ ipykernel
 streamlit
 fastapi
 uvicorn[standard]
+pre-commit
+sqlmodel

@@ -1,8 +1,6 @@
-import torch
-import requests
 import pathlib
 from PIL import Image
-from io import BytesIO
+
 
 from diffusers import StableDiffusionImg2ImgPipeline
 
@@ -13,7 +11,6 @@ device = "cpu"
 pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
     "runwayml/stable-diffusion-v1-5",
 ).to(device)
-
 
 
 def image_retrieval(id_number: int) -> Image:
