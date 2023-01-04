@@ -1,8 +1,6 @@
-import torch
-import requests
 import pathlib
 from PIL import Image
-from io import BytesIO
+
 
 from diffusers import StableDiffusionImg2ImgPipeline
 
@@ -15,24 +13,19 @@ pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
 ).to(device)
 
 
-def hg_image_download() -> Image:
-    """original image code"""
-    url = "https://raw.githubusercontent.com/CompVis/stable-diffusion/main/assets/stable-samples/img2img/sketch-mountains-input.jpg"
-    response = requests.get(url)
-    init_image = Image.open(BytesIO(response.content)).convert("RGB")
-    init_image.thumbnail((768, 768))
-    return init_image
+def image_retrieval(id_number: int) -> Image:
+    """Retrieve an image from the data based based on an id number
 
+    Args:
+        id_number (int): image identification number
 
-def image_retrieval(id_num: int) -> Image:
-    image_num = "flower" + str(id_num) + ".jpg"
+    Returns:
+        Image:
+    """
+    image_num = "flower" + str(id_number) + ".jpg"
     LOCALPATH = DATAPATH / image_num
     image = Image.open(LOCALPATH).convert("RGB")
     return image
-
-
-prompt = "A fantasy landscape, trending on artstation"
-prompt2 = "In the style of Monet"
 
 
 def image_pipe(
@@ -41,6 +34,15 @@ def image_pipe(
     strength: float = 0.5,
     guidance: float = 5,
 ) -> Image:
+    """Image pipe for the hugging face image to image transfer
+    Args:
+        prompt (str): user defined prompt
+        initial_image (Image): image selected by id number
+        strength (float, optional): _description_. Defaults to 0.5.
+        guidance (float, optional): _description_. Defaults to 5.
+    Returns:
+        Image: image modified by the user prompt.
+    """
     modify_image = pipe(
         prompt=prompt,
         image=initial_image,
@@ -48,6 +50,3 @@ def image_pipe(
         guidance_scale=guidance,
     )
     return modify_image.images[0]
-
-
-# images[0].save("fantasy_landscape.png")
