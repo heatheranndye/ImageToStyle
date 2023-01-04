@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from photo_mod.fast_app import app
+from fast_app import app
 
 
 client = TestClient(app)
