@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+import pathlib
 from pydantic import BaseModel
 
 from ml_imagetoimage import image_retrieval, image_pipe
+
+DATAPATH = pathlib.Path(__file__).parent / "data"
+
 
 app = FastAPI()
 
@@ -36,5 +40,6 @@ def generate_image(values: User_input):
     """
     initial_image = image_retrieval(values.id_number)
     image = image_pipe(values.prompt, initial_image)
-    image.save("image.png")
-    return FileResponse("image.png")
+    image_file = DATAPATH / "image.png"
+    image.save(image_file)
+    return FileResponse(image_file)
