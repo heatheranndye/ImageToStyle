@@ -33,4 +33,5 @@ if st.button("Modify:"):
     )
 
 response_image_file = DATAPATH / "image.png"
-st.image(response_image_file)
+response_image = Image.open(response_image_file)
+st.image(response_image)

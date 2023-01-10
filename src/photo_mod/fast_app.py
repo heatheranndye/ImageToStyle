@@ -41,5 +41,5 @@ def generate_image(values: User_input):
     initial_image = image_retrieval(values.id_number)
     image = image_pipe(values.prompt, initial_image)
     image_file = DATAPATH / "image.png"
-    image.save("image_file")
+    image.save(image_file)
     return FileResponse(image_file)
