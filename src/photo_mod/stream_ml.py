@@ -22,16 +22,15 @@ image = Image.open(image_file)
 st.image(image)
 
 
-user_prompt = st.text_input(label="Add a prompt")
+user_prompt1 = st.number_input(label="value1")
+user_prompt2 = st.number_input(label="value2")
 
-inputs = {"id_number": option, "prompt": user_prompt}
+
+inputs = {"number_1": user_prompt1, "number_2": user_prompt2}
 
 if st.button("Modify:"):
     res = requests.post(
-        url="http://127.0.0.1:8000/generate",
+        url="http://127.0.0.1:8000/add",
         data=json.dumps(inputs),
     )
-
-response_image_file = DATAPATH / "image.png"
-response_image = Image.open(response_image_file)
-st.image(response_image)
+    st.write(res.text)
