@@ -9,7 +9,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     git 
 
-RUN git clone https://github.com/heatheranndye/ImageToStyle .
+RUN git clone -b 10-create-a-docker-toy https://github.com/heatheranndye/ImageToStyle .
 
 RUN pip3 install -r requirements.txt
 RUN pip3 install -r dev-requirements.txt
