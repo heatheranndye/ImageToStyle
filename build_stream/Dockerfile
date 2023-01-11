@@ -15,4 +15,4 @@ RUN pip3 install -r requirements.txt
 RUN pip3 install -r dev-requirements.txt
 WORKDIR /app/src/photo_mod
 
-CMD streamlit run stream_ml.py --server.port=8501 --server.address=127.0.0.1
+CMD streamlit run stream_ml.py 
