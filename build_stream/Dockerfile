@@ -8,11 +8,17 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
     git 
-
-RUN git clone -b 10-create-a-docker-toy https://github.com/heatheranndye/ImageToStyle .
-
+COPY requirements.txt requirements.txt
+COPY dev-requirements.txt dev-requirements.txt
 RUN pip3 install -r requirements.txt
 RUN pip3 install -r dev-requirements.txt
+COPY /src/photo_mod/data/  /app/src/photo_mod/data/
+COPY /src/photo_mod/stream_ml.py /app/src/photo_mod/stream_ml.py
+
+
+
 WORKDIR /app/src/photo_mod
 
-CMD streamlit run stream_ml.py 
+# CMD streamlit run stream_ml.py 
+
+ENTRYPOINT ["streamlit", "run", "stream_ml.py", "--server.port=8501", "--server.address=0.0.0.0"]
