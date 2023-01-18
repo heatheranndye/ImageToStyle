@@ -30,7 +30,7 @@ inputs = {"number_1": user_prompt1, "number_2": user_prompt2}
 
 if st.button("Modify:"):
     res = requests.post(
-        url="http://localhost:8000/add",
+        url="http://0.0.0.0:8000/add",
         data=json.dumps(inputs),
     )
     st.write(res.text)
