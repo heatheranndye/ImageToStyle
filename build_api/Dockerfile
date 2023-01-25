@@ -15,4 +15,4 @@ RUN pip3 install -r requirements.txt
 RUN pip3 install -r dev-requirements.txt
 WORKDIR /app/src/photo_mod
 
-CMD uvicorn fast_app:app --host 0.0.0.0 --port 8000
+CMD uvicorn fast_app:app --host 0.0.0.0 --port 8000 --reload
