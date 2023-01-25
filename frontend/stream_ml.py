@@ -13,13 +13,13 @@ st.write("Select a base image")
 option = st.selectbox("Choose a number", ("1", "2", "3", "4"))
 
 
-image_name = "flower" + str(option) + ".jpg"
+image_name = f"flower{option}.jpg"
 image_file = DATAPATH / image_name
 
-st.write(image_file)
+# st.write(image_file)
 
-image = Image.open(image_file)
-st.image(image)
+# image = Image.open(image_file)
+# st.image(image)
 
 
 user_prompt1 = st.number_input(label="value1")
