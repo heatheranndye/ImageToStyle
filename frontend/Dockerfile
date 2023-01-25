@@ -4,7 +4,6 @@ FROM python:3.9-slim
 
 EXPOSE 8501
 
-# WORKDIR /app
 COPY data data
 
 COPY requirements.txt requirements.txt
