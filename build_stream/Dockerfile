@@ -21,4 +21,4 @@ WORKDIR /app/src/photo_mod
 
 # CMD streamlit run stream_ml.py 
 
-ENTRYPOINT ["streamlit", "run", "stream_ml.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD streamlit run --server.port 8501 --server.enableCORS false stream_ml.py
