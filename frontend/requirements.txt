@@ -5,5 +5,8 @@ mypy
 ipykernel
 streamlit
 fastapi
-uvicorn[standard]
 pre-commit
+httpx
+scipy 
+ftfy
+Pillow

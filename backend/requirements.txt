@@ -3,9 +3,9 @@ black
 pytest
 mypy
 ipykernel
-streamlit
 fastapi
 uvicorn[standard]
 pre-commit
-sqlmodel
-httpx
+scipy 
+ftfy
+Pillow
