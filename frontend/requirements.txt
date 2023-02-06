@@ -8,5 +8,4 @@ fastapi
 pre-commit
 httpx
 scipy 
-ftfy
-Pillow
+requests
