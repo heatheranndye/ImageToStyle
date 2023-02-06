@@ -7,10 +7,41 @@ from torchvision.utils import save_image
 import torch.optim as optim
 import pathlib
 
-DATAPATH = pathlib.Path(__file__).parent.parent / "photo_mod" / "data"
+
+DATAPATH = pathlib.Path(__file__).parent / "data"
 
 model = models.vgg19(weights="IMAGENET1K_V1").features
 device = torch.device("cuda" if (torch.cuda.is_available()) else "cpu")
+
+
+def image_retrieval(id_number: int) -> Image:
+    """Retrieve an image from the data based based on an id number
+
+    Args:
+        id_number (int): image identification number
+
+    Returns:
+        Image:
+    """
+    image_num = "flower" + str(id_number) + ".jpg"
+    LOCALPATH = DATAPATH / image_num
+    image = Image.open(LOCALPATH).convert("RGB")
+    return image
+
+
+def texture_retrieval(id_number: int) -> Image:
+    """Retrieve an image from the data based based on an id number
+
+    Args:
+        id_number (int): image identification number
+
+    Returns:
+        Image:
+    """
+    image_num = "texture" + str(id_number) + ".jpg"
+    LOCALPATH = DATAPATH / image_num
+    image = Image.open(LOCALPATH).convert("RGB")
+    return image
 
 
 def image_loader(path):
@@ -29,11 +60,6 @@ def image_loader(path):
     image = loader(image).unsqueeze(0)
     return image.to(device, torch.float)
 
-
-original_image = image_loader(DATAPATH / "flower3.jpg")
-style_image = image_loader(DATAPATH / "texture4.jpg")
-
-generated_image = original_image.clone().requires_grad_(True)
 
 # Defining a class that for the model
 
@@ -129,28 +155,38 @@ alpha = 10
 beta = 50
 
 
-# using adam optimizer and it will update
-#  the generated image not the model parameter
-optimizer = optim.Adam([generated_image], lr=lr)
+def image_trainer(label: int) -> Image:
+    original_image = image_loader(DATAPATH / "flower3.jpg")
+    style_image = image_loader(DATAPATH / "texture4.jpg")
+    image_name = "gen" + str(label) + ".jpg"
+    generated_image = original_image.clone().requires_grad_(True)
 
-# iterating for 1000 times
-for e in range(epoch):
-    # extracting the features of generated, content
-    # and the original required for calculating the loss
-    gen_features = model(generated_image)
-    orig_feautes = model(original_image)
-    style_featues = model(style_image)
+    # using adam optimizer and it will update
+    #  the generated image not the model parameter
+    optimizer = optim.Adam([generated_image], lr=lr)
 
-    # iterating over the activation of each layer
-    # and calculate the loss and add it to the content and the style loss
-    total_loss = calculate_loss(gen_features, orig_feautes, style_featues)
-    # optimize the pixel values of the generated
-    # image and backpropagate the loss
-    optimizer.zero_grad()
-    total_loss.backward()
-    optimizer.step()
-    # print the image and save it after each 100 epoch
-    if e / 100:
-        print(total_loss)
+    # iterating for 1000 times
+    for e in range(100):
+        # extracting the features of generated, content
+        # and the original required for calculating the loss
+        gen_features = model(generated_image)
+        orig_feautures = model(original_image)
+        style_features = model(style_image)
 
-        save_image(generated_image, "gen2.png")
+        # iterating over the activation of each layer
+        # and calculate the loss and add it to the content and the style loss
+        total_loss = calculate_loss(
+            gen_features,
+            orig_feautures,
+            style_features,
+        )
+        # optimize the pixel values of the generated
+        # image and backpropagate the loss
+        optimizer.zero_grad()
+        total_loss.backward()
+        optimizer.step()
+        # print the image and save it after each 100 epoch
+        if e / 100:
+            print(total_loss)
+
+            save_image(generated_image, image_name)
