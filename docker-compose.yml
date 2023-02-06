@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  fastapi:
+    container_name: fastapi
+    build: backend/.
+    command: "uvicorn app.fast_app:app --host 0.0.0.0 --port 8000"
+    ports:
+      - 8000:8000
+    networks:
+      - frontend
+      - backend
+
+  streamlit:
+    container_name: streamlit
+    build: frontend/.
+    command: "streamlit run --server.port 8501 --server.enableCORS false stream_ml.py"
+    ports:
+      - 8501:8501
+    networks:
+      - frontend
+
+networks:
+  frontend:
+  backend:
