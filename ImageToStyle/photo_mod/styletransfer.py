@@ -8,11 +8,12 @@ from torchvision.utils import save_image
 import torch.optim as optim
 import torch.nn.functional as F
 
-DATAPATH = pathlib.Path.cwd() / "data"
+DATAPATH = pathlib.Path(__file__).parent / "data"
 
 CONTENT_PATH = DATAPATH / "squareflower.jpg"
 STYLE_PATH = DATAPATH / "YellowFlowerWaterPixelTrim.jpg"
 device = torch.device("cuda" if (torch.cuda.is_available()) else "cpu")
+model = models.vgg19(weights="IMAGENET1K_V1").features
 alpha = 1000
 beta = 50
 
@@ -41,40 +42,55 @@ def image_loader(path):
 
 
 class VGG(nn.Module):
+    """The model uses the pre-trained VGG19 model.  We
+     The forward method returns the results of applying
+     the layers in req_features as described in
+    arxiv.org/pdf/1508.06576.pdf.
+     The neural network is truncated at layer 28.
+     Args:
+         nn (_type_): Base class for all neural network modules.
+    """
+
     def __init__(self):
         super(VGG, self).__init__()
         self.req_features = ["0", "5", "10", "19", "28"]
-        # Since we need only the 5 layers in the model so we
-        #  will be dropping all the rest layers from the features of the model
-        self.model = models.vgg19(weights="IMAGENET1K_V1").features[
-            :29
-        ]  # model will contain the first 29 layers
+        self.model = models.vgg19(weights="IMAGENET1K_V1").features[:29]
 
-    # x holds the input tensor(image) that will be feeded to each layer
-    def forward(self, x):
-        # initialize an array that wil hold the
-        # activations from the chosen layers
+    def forward(self, output_layer) -> list:
+        """Returns the output of selected layers of
+        the neural network.
+
+        Args:
+            layer output: recursive variable for the layer
+            outputs. The first layer output is the torch
+            tensor constructed from an image
+
+        Returns:
+            List: A list of 5 torch tensors.
+        """
         features = []
         # Iterate over all the layers of the mode
         for layer_num, layer in enumerate(self.model):
             # activation of the layer will stored in x
-            x = layer(x)
+            output_layer = layer(output_layer)
             # appending the activation of the selected
             #  layers and return the feature array
             if str(layer_num) in self.req_features[0:]:
-                features.append(x)
-
+                features.append(output_layer)
         return features
 
 
-def calc_style_loss(gen, style):
+def calc_style_loss(
+    gen_feat,
+    style_feat,
+):
     # Calculating the gram matrix for the style and the generated image
     style_l = 0
     for x in range(0, 5, 1):
         # print(x)
-        batch, channel, height, width = gen[x].shape
-        genitem = gen[x]
-        styleitem = style[x]
+        batch, channel, height, width = gen_feat[x].shape
+        genitem = gen_feat[x]
+        styleitem = style_feat[x]
         G = torch.mm(
             genitem.view(
                 channel,
@@ -109,14 +125,14 @@ def calc_content_loss(gen_feat, orig_feat):
 
 
 def calculate_loss(
-    gen,
-    cont,
-    style,
+    gen_feat,
+    cont_feat,
+    style_feat,
 ):
     style_loss = content_loss = 0
     # extracting the dimensions from the generated image
-    content_loss += calc_content_loss(gen, cont)
-    style_loss += calc_style_loss(gen, style)
+    content_loss += calc_content_loss(gen_feat, cont_feat)
+    style_loss += calc_style_loss(gen_feat, style_feat)
 
     # calculating the total loss of e th epoch
     total_loss = alpha * content_loss + beta * style_loss
@@ -126,8 +142,9 @@ def calculate_loss(
 def image_trainer() -> Image:
     original_image = image_loader(DATAPATH / "squareflower.jpg")
     style_image = image_loader(DATAPATH / "YellowFlowerWaterPixelTrim.jpg")
-    image_name = "gen5.jpg"
-    model = model = models.vgg19(weights="IMAGENET1K_V1").features
+    image_name = "gen.jpg"
+    model = VGG().to(device).eval()
+
     lr = 0.04
 
     generated_image = original_image.clone().requires_grad_(True)
@@ -161,3 +178,7 @@ def image_trainer() -> Image:
             print(total_loss)
 
             save_image(generated_image, image_name)
+
+
+if __name__ == "__main__":
+    image_trainer()
