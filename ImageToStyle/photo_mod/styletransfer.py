@@ -17,6 +17,9 @@ model = models.vgg19(weights="IMAGENET1K_V1").features
 alpha = 1000
 beta = 50
 
+style_layers_default = [1, 2, 3, 4, 5]
+content_layers_default = [5]
+
 
 def image_loader(path):
     """Load the image file. Change the pixels to
@@ -69,9 +72,7 @@ class VGG(nn.Module):
             List: A list of 5 torch tensors.
         """
         features = []
-        # Iterate over all the layers of the mode
         for layer_num, layer in enumerate(self.model):
-            # activation of the layer will stored in x
             output_layer = layer(output_layer)
             # appending the activation of the selected
             #  layers and return the feature array
@@ -80,17 +81,31 @@ class VGG(nn.Module):
         return features
 
 
-def calc_style_loss(
+def calculate_style_loss(
     gen_feat,
     style_feat,
-):
-    # Calculating the gram matrix for the style and the generated image
-    style_l = 0
-    for x in range(0, 5, 1):
-        # print(x)
-        batch, channel, height, width = gen_feat[x].shape
-        genitem = gen_feat[x]
-        styleitem = style_feat[x]
+    style_layers=style_layers_default,
+) -> torch.Tensor:
+    """Sets up the Gram matrix for the generated
+    feature layers and the style feature layers.
+    Then compute the MSE.
+
+    Args:
+        gen_feat(Torch Tensors): list of Torch tensors
+        style_feat (Torch Tensors): list of torch tensors
+        style_layers (Torch Tensors, optional): list of
+        integers. Defaults to style_layers_default.
+
+    Returns:
+        torch.Tensor: Style loss value
+    """
+    style_loss = 0
+    for value in style_layers:
+        counter = value - 1
+        # print(f"{counter}")
+        batch, channel, height, width = gen_feat[counter].shape
+        genitem = gen_feat[counter]
+        styleitem = style_feat[counter]
         G = torch.mm(
             genitem.view(
                 channel,
@@ -105,68 +120,118 @@ def calc_style_loss(
             ),
             styleitem.view(channel, height * width).t(),
         )
-
-        # Calcultating the style loss of each layer by
-        # calculating the MSE between the gram matrix of
-        # the style image and the generated image and adding it to style loss
-        style_l += F.mse_loss(G, A)
-    return style_l
+        style_loss += F.mse_loss(G, A)
+    return style_loss
 
 
-def calc_content_loss(gen_feat, orig_feat):
-    # calculating the content loss of each layer
-    #  by calculating the MSE between the content and
-    #  generated features and adding it to content loss
-    content_l = 0
-    x = 4
-    # for x in range(len(gen_feat)):
-    content_l += F.mse_loss(gen_feat[x], orig_feat[x])
-    return content_l
+def calculate_content_loss(
+    content_feat,
+    gen_feat,
+    content_layers=content_layers_default,
+) -> torch.Tensor:
+    """The MSE is calculated for list of features.
+
+    Args:
+        gen_feat (list): list of torch Tensors
+        content_feat (list): list of torch Tensors
+        content_layers (list, optional):layer list.
+        Defaults to content_layers_default.
+
+    Returns:
+        _type_: _description_
+    """
+    content_loss = 0
+    for value in content_layers:
+        counter = value - 1
+        # print(f"{counter}")
+        content_loss += F.mse_loss(gen_feat[counter], content_feat[counter])
+    return content_loss
 
 
 def calculate_loss(
+    content_feat,
     gen_feat,
-    cont_feat,
     style_feat,
+    content_layers=content_layers_default,
+    style_layers=style_layers_default,
 ):
+    """Sums the content loss and style loss.
+
+    Args:
+        gen_feat (list): _description_
+        content_feat (list): _description_
+        style_feat (list): _description_
+        content_layers (list, optional): _description_.
+        Defaults to content_layers_default.
+        style_layers (list, optional): _description_.
+        Defaults to style_layers_default.
+
+    Returns:
+        _type_: _description_
+    """
     style_loss = content_loss = 0
-    # extracting the dimensions from the generated image
-    content_loss += calc_content_loss(gen_feat, cont_feat)
-    style_loss += calc_style_loss(gen_feat, style_feat)
+
+    content_loss += calculate_content_loss(
+        content_feat,
+        gen_feat,
+        content_layers,
+    )
+    style_loss += calculate_style_loss(
+        gen_feat,
+        style_feat,
+        style_layers,
+    )
 
     # calculating the total loss of e th epoch
     total_loss = alpha * content_loss + beta * style_loss
     return total_loss
 
 
-def image_trainer() -> Image:
-    original_image = image_loader(DATAPATH / "squareflower.jpg")
-    style_image = image_loader(DATAPATH / "YellowFlowerWaterPixelTrim.jpg")
-    image_name = "gen.jpg"
+def image_trainer(
+    content_path=CONTENT_PATH,
+    style_path=STYLE_PATH,
+    alpha=alpha,
+    beta=beta,
+    content_layers=content_layers_default,
+    style_layers=style_layers_default,
+) -> Image:
+    """Trains the generated image, which is
+    initially a copy of the content image.
+
+    Args:
+        content_path (Path, optional): content image.
+         Defaults to CONTENT_PATH.
+        style_path (Path, optional): style image.
+        Defaults to STYLE_PATH.
+        content_layer (list, optional): content layers.
+        Defaults to content_layers_default.
+        style_layer (list, optional): style layers.
+        Defaults to style_layers_default.
+
+    Returns:
+        Image: _description_
+    """
+    content_image = image_loader(content_path)
+    style_image = image_loader(style_path)
     model = VGG().to(device).eval()
 
     lr = 0.04
 
-    generated_image = original_image.clone().requires_grad_(True)
+    generated_image = content_image.clone().requires_grad_(True)
     model.requires_grad_(False)
-    # using adam optimizer and it will update
-    #  the generated image not the model parameter
     optimizer = optim.Adam([generated_image], lr=lr)
+    content_features = model(content_image)
+    style_features = model(style_image)
 
-    # iterating for 1000 times
     for e in range(100):
-        # extracting the features of generated, content
-        # and the original required for calculating the loss
         gen_features = model(generated_image)
-        orig_features = model(original_image)
-        style_features = model(style_image)
 
-        # iterating over the activation of each layer
-        # and calculate the loss and add it to the content and the style loss
         total_loss = calculate_loss(
+            content_features,
             gen_features,
-            orig_features,
             style_features,
+            style_layers=style_layers,
+            content_layers=content_layers,
         )
         # optimize the pixel values of the generated
         # image and backpropagate the loss
@@ -174,11 +239,12 @@ def image_trainer() -> Image:
         total_loss.backward()
         optimizer.step()
         # print the image and save it after each 100 epoch
-        if e / 100:
-            print(total_loss)
+        # if e / 100:
+        # print(f"e: {e}, loss:{total_loss}")
 
-            save_image(generated_image, image_name)
+    return generated_image
 
 
 if __name__ == "__main__":
-    image_trainer()
+    image_test = image_trainer()
+    save_image(image_test, "gen22.jpg")
