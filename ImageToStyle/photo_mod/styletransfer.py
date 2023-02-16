@@ -11,7 +11,7 @@ import torch.nn.functional as F
 DATAPATH = pathlib.Path(__file__).parent / "data"
 
 CONTENT_PATH = DATAPATH / "squareflower.jpg"
-STYLE_PATH = DATAPATH / "YellowFlowerWaterPixelTrim.jpg"
+STYLE_PATH = DATAPATH / "picasso.jpg"
 device = torch.device("cuda" if (torch.cuda.is_available()) else "cpu")
 model = models.vgg19(weights="IMAGENET1K_V1").features
 alpha = 1000
@@ -242,7 +242,9 @@ def image_trainer(
         # if e / 100:
         # print(f"e: {e}, loss:{total_loss}")
 
-    return generated_image
+    save_image(generated_image, "gen.jpg")
+    image = Image.open("gen.jpg")
+    return image
 
 
 if __name__ == "__main__":
