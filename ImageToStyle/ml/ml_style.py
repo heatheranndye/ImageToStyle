@@ -31,7 +31,7 @@ def image_loader(path):
 
 
 original_image = image_loader(DATAPATH / "flower3.jpg")
-style_image = image_loader(DATAPATH / "texture3.jpg")
+style_image = image_loader(DATAPATH / "texture4.jpg")
 
 generated_image = original_image.clone().requires_grad_(True)
 
@@ -124,9 +124,9 @@ model = VGG().to(device).eval()
 
 # initialize the paramerters required for fitting the model
 epoch = 1000
-lr = 0.004
-alpha = 8
-beta = 70
+lr = 0.04
+alpha = 10
+beta = 50
 
 
 # using adam optimizer and it will update

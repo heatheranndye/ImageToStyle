@@ -4,6 +4,7 @@ from PIL import Image
 import json
 import requests
 
+
 DATAPATH = pathlib.Path(__file__).parent / "data"
 
 st.title("Image to Image Diffusion")
