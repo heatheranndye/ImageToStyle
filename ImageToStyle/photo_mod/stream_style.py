@@ -54,7 +54,7 @@ more_info = (
 
 
 st.sidebar.write(prog_intro)
-
+st.sidebar.write(more_info)
 
 st.sidebar.info(
     "More about art and quilting at"
