@@ -1,10 +1,6 @@
-diffusers 
-accelerate
-transformers
-scipy 
-ftfy
-Pillow
+streamlit
 torch
 torchvision
-torchaudio
-jupyter    
+flake8 
+black 
+pytest 

@@ -7,5 +7,14 @@ streamlit
 fastapi
 uvicorn[standard]
 pre-commit
-sqlmodel
 httpx
+diffusers 
+accelerate
+transformers
+scipy 
+ftfy
+Pillow
+torch
+torchvision
+torchaudio
+jupyter    
