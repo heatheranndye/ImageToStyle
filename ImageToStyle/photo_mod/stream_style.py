@@ -34,7 +34,22 @@ prog_intro = (
     " tutorial, and "
     "https://towardsdatascience.com"
     "/implementing-neural-style-trans"
-    "fer-using-pytorch-fd8d43fb7bfa"
+    "fer-using-pytorch-fd8d43fb7bfa."
+)
+more_info = (
+    "This program uses the "
+    "pretrained VGG model weights. "
+    "Selected layers of this model are "
+    "used to construct the neural transfer "
+    "model. Select layers to use with "
+    "the content and select layers "
+    "to use with the style. "
+    "Then choose relative weights "
+    "for the content and style layers."
+    "Push the Style transfer button "
+    "to see how your model works."
+    "The sample image uses the layers "
+    "and recommended in the paper."
 )
 
 
@@ -42,7 +57,10 @@ st.sidebar.write(prog_intro)
 
 
 st.sidebar.info(
-    "More about [www.heatheranndye.com](www.heatheranndye.com)",
+    "More about art and quilting at"
+    " [www.heatheranndye.com](www.heatheranndye.com)"
+    "More information about machine learning at"
+    " [my github blog](https://heatheranndye.github.io/) ",
     icon="ℹ️",
 )
 
