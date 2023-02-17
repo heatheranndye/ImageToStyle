@@ -47,7 +47,7 @@ more_info = (
     "Then choose relative weights "
     "for the content and style layers. "
     "Push the Style transfer button "
-    "to see how your model works."
+    "to see how your model works. "
     "The sample image uses the layers "
     "and recommended in the paper."
 )
@@ -78,12 +78,15 @@ with st.container():
         st.subheader("Generated Image")
         st.image(sample_image, width=200)
 
-st.write("Select the layers to build your model")
+st.subheader("Select the layers to build your model.")
+st.write("Select at least one layer for each.")
 
 options_content = st.multiselect("Content Layers", [1, 2, 3, 4, 5])
 options_style = st.multiselect("Style Layers", [1, 2, 3, 4, 5])
+st.subheader("Select relative weights for content and style.")
 alpha = st.slider("Weight of Content", min_value=1, max_value=100)
 beta = st.slider("Weight of the Style", min_value=1, max_value=20)
+st.subheader("Push the button and wait after making selections.")
 if st.button("Style Transfer:"):
     result = image_trainer(
         alpha=alpha,
