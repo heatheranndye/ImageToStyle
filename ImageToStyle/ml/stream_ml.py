@@ -11,7 +11,7 @@ st.title("Image to Image Diffusion")
 
 st.write("Select a base image")
 
-option = st.selectbox("Choose a number", ("1", "2", "3", "4"))
+option = st.selectbox("Choose a number", ("1", "4"))
 
 
 image_name = "flower" + str(option) + ".jpg"
