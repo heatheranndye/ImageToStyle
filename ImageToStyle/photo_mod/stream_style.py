@@ -32,9 +32,9 @@ prog_intro = (
     " https://arxiv.org/pdf/1508.06576.pdf, "
     "PyTorch's neural style"
     " tutorial, and "
-    "a (Toward Data Science Article)[https://towardsdatascience.com"
+    "a [Toward Data Science Article](https://towardsdatascience.com"
     "/implementing-neural-style-trans"
-    "fer-using-pytorch-fd8d43fb7bfa.]"
+    "fer-using-pytorch-fd8d43fb7bfa)."
 )
 more_info = (
     "This program uses the "
