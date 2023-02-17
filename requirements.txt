@@ -1,6 +1,3 @@
 streamlit
 torch
 torchvision
-flake8 
-black 
-pytest 

@@ -4,14 +4,16 @@ from PIL import Image
 
 
 from styletransfer import (
+    SAMPLE_PATH,
     STYLE_PATH,
     CONTENT_PATH,
     image_trainer,
 )
 
+
 cont_img = Image.open(CONTENT_PATH)
 style_img = Image.open(STYLE_PATH)
-sample_image = Image.open("samplegenpicasso.jpg")
+sample_image = Image.open(SAMPLE_PATH)
 
 
 st.set_page_config(

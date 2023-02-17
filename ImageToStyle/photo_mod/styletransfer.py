@@ -12,6 +12,8 @@ DATAPATH = pathlib.Path(__file__).parent / "data"
 
 CONTENT_PATH = DATAPATH / "squareflower.jpg"
 STYLE_PATH = DATAPATH / "picasso.jpg"
+SAMPLE_PATH = DATAPATH / "samplegenpicasso.jpg"
+
 device = torch.device("cuda" if (torch.cuda.is_available()) else "cpu")
 model = models.vgg19(weights="IMAGENET1K_V1").features
 alpha = 1000
