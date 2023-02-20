@@ -25,7 +25,7 @@ st.sidebar.markdown(" ## Build Your Own")
 
 
 prog_intro = (
-    "This program allows you"
+    "- This program allows you"
     " to build your own neural style"
     " transfer model. The program is"
     " based on the paper"
@@ -36,30 +36,40 @@ prog_intro = (
     "/implementing-neural-style-trans"
     "fer-using-pytorch-fd8d43fb7bfa)."
 )
-more_info = (
-    "This program uses the "
+more_info1 = (
+    "- This program uses the "
     "pretrained VGG 19 model weights. "
     "Selected layers of this model are "
     "used to construct the neural transfer "
-    "model. Select layers to use with "
-    "the content and select layers "
-    "to use with the style. "
-    "Then choose relative weights "
-    "for the content and style layers. "
-    "Push the Style transfer button "
-    "to see how your model works. "
-    "The sample image uses the layers "
-    "and recommended in the paper."
+    "model."
+)
+layer_info = "- Select the content and style layers to use in the model."
+weight_info = "- Choose relative weights for the content and style layers. "
+push_info = "- Push the Style transfer button to see how your model works. "
+sample_info = "- The sample image uses the layers " "recommended in the paper."
+
+st.markdown(
+    """
+<style>
+[data-testid="stMarkdownContainer"] ul{
+    list-style-position: inside;
+}
+</style>
+""",
+    unsafe_allow_html=True,
 )
 
-
-st.sidebar.write(prog_intro)
-st.sidebar.write(more_info)
+st.sidebar.markdown(prog_intro)
+st.sidebar.markdown(more_info1)
+st.sidebar.markdown(layer_info)
+st.sidebar.markdown(weight_info)
+st.sidebar.markdown(sample_info)
+st.sidebar.markdown(push_info)
 
 st.sidebar.info(
     "More about art and quilting at"
-    " [www.heatheranndye.com](www.heatheranndye.com)"
-    "More information about machine learning at"
+    " [www.heatheranndye.com](www.heatheranndye.com)."
+    " More information about machine learning at"
     " [my github blog](https://heatheranndye.github.io/) ",
     icon="ℹ️",
 )
@@ -79,7 +89,7 @@ with st.container():
         st.image(sample_image, width=200)
 
 st.subheader("Select the layers to build your model.")
-st.write("Select at least one layer for each.")
+st.write("Select between 1 and 5 layers for each.")
 
 options_content = st.multiselect("Content Layers", [1, 2, 3, 4, 5])
 options_style = st.multiselect("Style Layers", [1, 2, 3, 4, 5])
